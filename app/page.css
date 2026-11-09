@@ -1,0 +1,272 @@
+/* Cron Schedule Explainer: a printed timetable with one departure board. */
+
+main { --focus: var(--honey-text); }
+code { font-family: var(--mono); }
+
+/* ---------- The stand: line, column heads, reading, board */
+.stand { padding-block: 4px 56px; }
+
+.line__top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 32px; min-height: 44px; }
+.line__name { font: 700 18px/1.2 var(--display); letter-spacing: -.02em; white-space: nowrap; }
+.line__label { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.line__label label { font-weight: 700; font-size: 15px; white-space: nowrap; }
+.line__label p { color: var(--ink-2); font-size: 15px; line-height: 1.35; }
+.copy { background: var(--ink); color: var(--paper); border-color: var(--ink); white-space: nowrap; }
+.copy:hover { background: var(--honey); border-color: var(--honey); color: var(--ink); }
+.copy[disabled] { background: transparent; color: var(--ink-3); border-color: color-mix(in srgb, var(--ink) 30%, transparent); cursor: not-allowed; }
+
+/* --fs-first sizes the 12-character sample before JavaScript measures the real font (12.6 characters at .56em each). */
+.line { container-type: inline-size; --fs-max: 168px; --fs-min: 44px; --line-h: 184px; --fs-first: clamp(var(--fs-min), 100cqi / 7.056, var(--fs-max)); }
+.line__input {
+  display: block; width: 100%; height: var(--line-h); margin: 0;
+  padding: calc(var(--line-h) - 1.22 * var(--fs, var(--fs-first))) 0 calc(.08 * var(--fs, var(--fs-first)));
+  border: 0; border-bottom: 8px solid var(--ink); border-radius: 0; background: transparent; outline: 0;
+  font-family: var(--mono); font-size: var(--fs, var(--fs-first)); font-weight: 400; line-height: 1.14; letter-spacing: 0;
+  caret-color: var(--honey-text); transition: border-color .18s var(--ease);
+}
+.line__input:focus { border-bottom-color: var(--honey-text); }
+.line__input[aria-invalid="true"] { border-bottom-color: var(--ember-text); }
+
+/* The rule above doubles as the top rule of the timetable head */
+.heads-wrap { position: relative; }
+.heads { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-bottom: 2px solid var(--ink); }
+.head { min-height: 112px; padding: 12px 16px 16px; }
+.head:first-child { padding-left: 0; }
+.head + .head { border-left: 1px solid var(--hair); }
+.head dt { font-size: 15px; font-weight: 700; line-height: 1.25; }
+.head dd { margin-top: 4px; display: grid; gap: 2px; }
+.head code { font-size: 24px; line-height: 1.25; overflow-wrap: anywhere; }
+.head__words { color: var(--ink-2); font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+.head__err { display: none; color: var(--ember-text); font-size: 15px; line-height: 1.3; font-weight: 600; overflow-wrap: anywhere; }
+.head.is-bad dt, .head.is-bad code { color: var(--ember-text); }
+.head.is-bad .head__words { display: none; }
+.head.is-bad .head__err { display: block; }
+
+.heads__msg { position: absolute; left: 0; right: 0; bottom: 16px; color: var(--ember-text); font-size: 18px; line-height: 1.3; font-weight: 600; pointer-events: none; }
+.heads__msg:empty, .heads__msg.is-field { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.heads.is-line .head__words { visibility: hidden; }
+.heads.is-line .head + .head { border-left-color: transparent; }
+
+/* Reading on the left, board on the right */
+.stage { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: 40px; margin-top: 16px; }
+.read { grid-column: 1; grid-row: 1; }
+.routes { grid-column: 1; grid-row: 2; align-self: end; }
+.depart { grid-column: 2; grid-row: 1 / span 2; }
+
+.read__say { font-size: 60px; line-height: 1.02; min-height: 184px; text-wrap: pretty; }
+.read__say[data-len="m"] { font-size: 56px; line-height: 1.04; }
+.read__say[data-len="l"] { font-size: 42px; line-height: 1.08; }
+.read__say[data-len="xl"] { font-size: 32px; line-height: 1.12; }
+.read__zone { color: var(--ink-2); }
+.read__say.is-bad { color: var(--ember-text); }
+
+.routes, .clock { border: 0; margin: 0; padding: 0; min-width: 0; }
+.routes legend, .clock legend { padding: 0; font-size: 15px; font-weight: 700; line-height: 1.25; }
+.routes ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; margin-top: 8px; }
+.route { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 0; width: 100%; min-height: 48px; padding: 4px 8px; background: transparent; border: 0; border-top: 1px solid var(--hair); text-align: left; cursor: pointer; transition: background-color .15s var(--ease); }
+.route span { font-size: 15px; font-weight: 500; line-height: 1.25; }
+.route code { font-size: 14px; line-height: 1.25; color: var(--ink-2); }
+.route:hover { background: var(--paper-3); }
+.route[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.route[aria-pressed="true"] code { color: var(--paper-3); }
+
+/* The clock: a two-way control with one plate */
+.clock { display: flex; align-items: center; justify-content: flex-end; gap: 16px; margin-bottom: 12px; }
+.clock legend { float: left; margin-right: 16px; align-self: center; line-height: 44px; }
+.clock__track { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 2px; border: 2px solid var(--ink); border-radius: 10px; }
+.clock__track::before { content: ""; position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); background: var(--ink); border-radius: 6px; transition: transform .22s var(--ease); }
+.clock__track[data-sel="dhaka"]::before { transform: translateX(100%); }
+.clock__track button { position: relative; min-height: 40px; padding: 0 16px; border: 0; background: transparent; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: color .18s var(--ease); }
+.clock__track button[aria-pressed="true"] { color: var(--paper); }
+
+/* ---------- The board */
+.board { position: relative; --focus: var(--honey); background: var(--night); color: var(--on-night); border-radius: 16px; padding: 20px 24px 24px; }
+.board table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.board caption { text-align: left; font: 750 26px/1.1 var(--display); letter-spacing: -.02em; padding-bottom: 12px; }
+.board th { padding: 0 0 8px; text-align: left; font-size: 15px; font-weight: 600; color: var(--on-night-2); transition: color .18s var(--ease); }
+.board[data-zone="utc"] th[data-col="utc"], .board[data-zone="dhaka"] th[data-col="dhaka"] { color: var(--honey); }
+.board td { padding: 2px 0; vertical-align: middle; }
+
+.flaps { display: flex; align-items: center; gap: 12px; }
+.flaps__date, .flaps__time { display: flex; align-items: center; }
+.flaps__date { gap: 1px; }
+.flaps__time { gap: 2px; }
+
+/* A cell at rest is one box and one character. No paint containment: a turning flap swings past the cell's edges. */
+.c { --cell: var(--night-3); position: relative; flex: none; display: grid; place-items: center; width: var(--w); height: var(--h); contain: size layout style; background: var(--cell); color: var(--honey); font-family: var(--mono); line-height: 1; border-radius: 3px; transition: color .18s var(--ease); }
+.c--d { --w: 12px; --h: 24px; font-size: 16px; font-weight: 500; }
+.c--d::after { display: none; }
+.c--t { --w: 26px; --h: 40px; font-size: 30px; font-weight: 600; }
+.c::after { content: ""; position: absolute; left: 0; right: 0; top: calc(50% - .5px); height: 1px; background: var(--night); z-index: 3; pointer-events: none; }
+
+/* The job's own clock stays honey; the other clock is quieter */
+.board[data-zone="utc"] .is-dhaka .c, .board[data-zone="dhaka"] .is-utc .c { color: var(--on-night-2); }
+
+/* While a cell flaps: its own text is the new character, ::before covers the lower half with the old one until the
+   flap lands, and .f turns on the cell's middle with the old top half on its front and the new lower half on its back. */
+.f { display: none; position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 50% 50%; z-index: 2; }
+.f1, .f2 { perspective: 200px; }
+.f1 .f, .f2 .f { display: block; animation: flap 240ms var(--ease) var(--d, 0ms) both; }
+.f2 .f { animation-name: flap2; }
+.f1::before, .f2::before, .f::before, .f::after { position: absolute; inset: 0; display: grid; place-items: center; background: var(--cell); }
+.f1::before, .f2::before, .f::after { clip-path: inset(50% 0 0 0); border-radius: 0 0 3px 3px; }
+.f1::before, .f2::before, .f::before { content: attr(data-o); }
+.f::before { clip-path: inset(0 0 50% 0); border-radius: 3px 3px 0 0; backface-visibility: hidden; }
+.f::after { content: attr(data-n); backface-visibility: hidden; transform: rotateX(180deg); }
+@keyframes flap { from { transform: rotateX(0deg); } to { transform: rotateX(-180deg); } }
+@keyframes flap2 { from { transform: rotateX(0deg); } to { transform: rotateX(-180deg); } }
+
+/* The message sits on a plate over the blank board, so the flaps can still be seen going blank */
+.board__note { position: absolute; left: 24px; top: 62%; transform: translateY(-50%); max-width: 72%; padding: 12px 20px 12px 0; background: var(--night); color: var(--on-night); font-size: 18px; line-height: 1.4; }
+.board__note[hidden] { display: none; }
+
+/* ---------- The problem: a yellow departures poster */
+.poster { background: var(--honey); color: var(--ink); --focus: var(--ink); padding-block: 72px 80px; contain-intrinsic-block-size: auto 699px; }
+.poster__in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+.poster h2 { grid-column: 1 / span 11; font-size: clamp(40px, 6vw, 88px); line-height: 1; }
+.poster h2 code { font-weight: 500; letter-spacing: -.04em; margin-right: .16em; }
+.poster__pair { grid-column: 1 / span 8; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 2fr) minmax(0, 5fr); align-items: center; margin-top: 56px; }
+.poster__same { align-self: start; margin-top: calc(125% - 2px); text-align: center; font-size: 16px; font-weight: 700; line-height: 1.2; }
+.poster__same::before { content: ""; display: block; height: 4px; background: var(--ink); margin-bottom: 8px; }
+.dial svg { width: 100%; height: auto; }
+.dial__face { fill: var(--paper-2); stroke: var(--ink); stroke-width: 6; }
+.dial__min { fill: none; stroke: var(--ink); stroke-width: 4; }
+.dial__hr { fill: none; stroke: var(--ink); stroke-width: 14; }
+.dial__hand { fill: var(--ink); }
+.dial figcaption { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; font-size: 17px; line-height: 1.3; }
+.dial__t { font: 500 clamp(36px, 3.6vw, 56px)/1 var(--mono); letter-spacing: -.02em; }
+.poster__copy { grid-column: 9 / span 4; align-self: end; display: grid; gap: 16px; font-size: 18px; line-height: 1.45; }
+.poster__copy code { font-weight: 600; white-space: nowrap; }
+
+/* ---------- Reference: a printed table with footnotes */
+.ref { padding-block: 96px 96px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; contain-intrinsic-block-size: auto 664px; }
+.ref h2 { grid-column: 1 / span 4; font-size: clamp(40px, 5vw, 72px); }
+.ref__sheet { grid-column: 5 / -1; }
+.ref table { width: 100%; border-collapse: collapse; border-top: 8px solid var(--ink); }
+.ref thead th { padding: 12px 16px 12px 0; text-align: left; font-size: 15px; font-weight: 700; border-bottom: 2px solid var(--ink); }
+.ref tbody th, .ref tbody td { padding: 16px 16px 16px 0; text-align: left; vertical-align: baseline; border-bottom: 1px solid var(--hair); font-weight: 400; font-size: 16px; line-height: 1.4; }
+.ref thead th:nth-child(1) { width: 20%; }
+.ref thead th:nth-child(2) { width: 30%; }
+.ref thead th:nth-child(3) { width: 27%; }
+.ref tbody th { font-size: 18px; white-space: nowrap; }
+.ref tbody th code { font-size: 22px; font-weight: 600; }
+.ref tbody td code { font-size: 16px; }
+.ref tbody td:last-child { color: var(--ink-2); }
+.ref__notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
+.ref__notes li { display: grid; grid-template-columns: 20px minmax(0, 1fr); font-size: 16px; line-height: 1.45; color: var(--ink-2); }
+.ref__mark { font: 600 15px/1.45 var(--mono); color: var(--ink); }
+
+/* ---------- Who it is for: two big statements, set unevenly */
+.who { background: var(--paper-3); padding-block: 88px 104px; contain-intrinsic-block-size: auto 295px; }
+.who__in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 48px; }
+.who h2 { grid-column: 1 / -1; font-size: 28px; letter-spacing: -.02em; }
+.who__a { grid-column: 1 / span 7; }
+.who__b { grid-column: 8 / span 5; }
+.who h3 { font-size: clamp(44px, 5.2vw, 76px); line-height: 1; }
+.who__b h3 { font-size: clamp(36px, 3.6vw, 52px); line-height: 1.04; }
+.who p { margin-top: 16px; font-size: 19px; line-height: 1.4; color: var(--ink-2); max-width: 36ch; }
+
+.ph-foot.below { contain-intrinsic-block-size: auto 406px; }
+
+/* ---------- Narrower screens */
+@media (1200px <= width < 1400px) {
+  .c--d { --w: 10px; --h: 22px; font-size: 14px; }
+  .c--t { --w: 21px; --h: 36px; font-size: 25px; }
+  .flaps { gap: 8px; }
+}
+
+@media (width < 1200px) {
+  .line { --fs-max: 132px; --line-h: 140px; }
+  .line__top { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
+  .line__name { grid-column: 1 / -1; }
+  .stage { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+  .read, .routes, .depart { grid-column: 1; grid-row: auto; }
+  .read { order: 1; }
+  .depart { order: 2; }
+  .routes { order: 3; }
+  .read__say { min-height: 0; }
+  .clock { justify-content: flex-start; }
+}
+
+@media (width < 760px) {
+  .stand { padding-bottom: 40px; }
+  .line { --fs-max: 58px; --fs-min: 22px; --line-h: 66px; }
+  .line__top { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+  .line__name { grid-column: 1; min-width: 0; white-space: normal; }
+  .copy { grid-column: 2; grid-row: 1; min-height: 44px; max-width: 168px; padding: 4px 12px; font-size: 15px; line-height: 20px; white-space: normal; text-align: center; }
+  .line__label { grid-column: 1 / -1; }
+  .line__label { display: block; }
+  .line__label label { display: block; font-size: 16px; }
+  .line__label p { margin-top: 2px; }
+  .line__input { border-bottom-width: 6px; margin-top: 8px; }
+
+  .heads { grid-template-columns: minmax(0, 1fr); border-bottom: 0; }
+  .head, .head:first-child { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: baseline; column-gap: 12px; min-height: 44px; padding: 8px 0; border: 0; border-bottom: 1px solid var(--hair); }
+  .head + .head { border-left: 0; }
+  .head dt { font-size: 15px; }
+  .head dd { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; row-gap: 0; }
+  .head code { font-size: 20px; }
+  .head__err { flex-basis: 100%; }
+  .heads__msg { position: static; margin-top: 8px; font-size: 16px; }
+  .heads.is-line .head__words { display: none; }
+
+  .read__say { font-size: 40px; line-height: 1.04; }
+  .read__say[data-len="m"] { font-size: 34px; }
+  .read__say[data-len="l"] { font-size: 30px; }
+  .read__say[data-len="xl"] { font-size: 26px; }
+
+  .routes ul { grid-template-columns: minmax(0, 1fr); }
+  .route { flex-direction: row; justify-content: space-between; align-items: center; min-height: 52px; gap: 12px; }
+  .route span { font-size: 16px; }
+
+  .clock { display: block; margin-bottom: 12px; }
+  .clock legend { float: none; line-height: 1.25; margin: 0 0 8px; }
+  .clock__track button { min-height: 44px; padding: 0 4px; font-size: 15px; }
+
+  .board { padding: 16px; border-radius: 12px; }
+  .board caption { font-size: 22px; }
+  .board th { font-size: 15px; }
+  .board td { padding: 8px 0; }
+  .board tr + tr td { border-top: 1px solid var(--night-3); }
+  .board th + th, .board td + td { padding-left: 16px; }
+  .flaps { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .flaps__date { gap: 0; }
+  .c--d { --cell: var(--night); --w: 10px; --h: 20px; font-size: 14px; }
+  .c--t { --w: 27px; --h: 38px; font-size: 26px; }
+  .flaps__time { gap: 2px; }
+  .board__note { left: 16px; max-width: calc(100% - 32px); padding-right: 12px; font-size: 16px; }
+
+  .poster { padding-block: 48px 56px; contain-intrinsic-block-size: auto 713px; }
+  .poster__in { grid-template-columns: minmax(0, 1fr); }
+  .poster h2 { grid-column: 1; font-size: 40px; line-height: 1.04; }
+  .poster__pair { grid-column: 1; grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr); margin-top: 32px; }
+  .poster__same { margin-top: calc(134% - 2px); font-size: 14px; }
+  .dial figcaption { font-size: 15px; }
+  .dial__t { font-size: 34px; }
+  .poster__copy { grid-column: 1; margin-top: 32px; font-size: 17px; }
+
+  .ref { grid-template-columns: minmax(0, 1fr); padding-block: 56px 64px; contain-intrinsic-block-size: auto 1161px; }
+  .ref h2 { grid-column: 1; font-size: 40px; margin-bottom: 24px; }
+  .ref__sheet { grid-column: 1; }
+  .ref table, .ref tbody, .ref tr { display: block; }
+  .ref thead { display: none; }
+  .ref tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--hair); }
+  .ref tbody th, .ref tbody td { display: block; width: auto; padding: 0; border: 0; white-space: normal; }
+  .ref tbody th { grid-column: 1 / -1; }
+  .ref tbody td:nth-of-type(1) { grid-column: 1 / -1; margin-bottom: 8px; }
+  .ref__notes { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+
+  .who { padding-block: 56px 64px; contain-intrinsic-block-size: auto 370px; }
+  .who__in { grid-template-columns: minmax(0, 1fr); row-gap: 32px; }
+  .who h2, .who__a, .who__b { grid-column: 1; }
+  .who h3 { font-size: 40px; }
+  .who__b h3 { font-size: 34px; }
+  .who p { font-size: 17px; }
+
+  .ph-foot.below { contain-intrinsic-block-size: auto 602px; }
+}
+
+@media (width < 380px) {
+  .c--d { --w: 9px; }
+  .c--t { --w: 24px; font-size: 24px; }
+}
