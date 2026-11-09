@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { company } from './site';
+import { tool } from './tool';
 
 // Share card, drawn at build time. Static TTF fonts, because the image renderer cannot read woff2 or variable fonts.
 const font = (file: string) => readFile(join(process.cwd(), 'assets/og-fonts', file));
@@ -19,7 +20,7 @@ export function ogImage({ kicker, title, text }: { kicker: string; title: string
           <path d={HEX} fill="none" stroke={C.line} strokeWidth="0.5" />
         </svg>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <svg width="46" height="46" viewBox="0 0 32 32"><path d={HEX} fill={C.honey} stroke={C.ink} strokeWidth="2.2" strokeLinejoin="round" /></svg>
+          <svg width="54" height="54" viewBox="0 0 32 32"><path d={HEX} fill={C.honey} stroke={C.ink} strokeWidth="2.2" strokeLinejoin="round" /><path d={tool.glyph} transform="translate(7 7) scale(.75)" fill="none" stroke="#141311" strokeWidth="2.4" strokeLinecap="square" /></svg>
           <span style={{ fontFamily: 'Bricolage', fontSize: 40, letterSpacing: -1.6 }}>{company.name}</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 920 }}>

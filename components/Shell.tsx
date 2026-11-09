@@ -5,7 +5,7 @@ export function ToolBar({ className = 'wrap ph-bar' }: { className?: string }) {
   return (
     <header className={className}>
       <a className="ph-brand" href={links.home} aria-label={`${company.name} home`}>
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8.6 3h14.8l7.4 13-7.4 13H8.6L1.2 16z" fill="#f2a516" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" /></svg>
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8.6 3h14.8l7.4 13-7.4 13H8.6L1.2 16z" fill="#f2a516" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" /><path d={tool.glyph} transform="translate(7 7) scale(.75)" fill="none" stroke="#141311" strokeWidth="2.4" strokeLinecap="square" /></svg>
         {company.name}
       </a>
       <nav className="ph-nav" aria-label="Main">

@@ -33,7 +33,7 @@ img, svg { display: block; max-width: 100%; }
 /* Header */
 .ph-bar { position: relative; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; }
 .ph-brand { display: inline-flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -.03em; text-decoration: none; white-space: nowrap; }
-.ph-brand svg { width: 26px; height: 26px; flex: none; }
+.ph-brand svg { width: 30px; height: 30px; flex: none; }
 .ph-nav { display: flex; align-items: center; gap: 20px; font-size: 15px; font-weight: 500; }
 .ph-nav a { text-decoration: none; }
 .ph-nav a:not(.ph-btn):hover { text-decoration: underline; text-underline-offset: 4px; }
