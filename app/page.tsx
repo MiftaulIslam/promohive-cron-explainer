@@ -1,6 +1,6 @@
 import type { Viewport } from 'next';
 import { CronStand } from '@/components/CronStand';
-import { Poster, Reference, Who } from '@/components/Sections';
+import { Clockwork, Poster, Reference, Who } from '@/components/Sections';
 import { ToolBar, ToolFoot } from '@/components/Shell';
 import './page.css';
 
@@ -13,6 +13,7 @@ export default function Page() {
       <main>
         <CronStand />
         <Poster />
+        <Clockwork />
         <Reference />
         <Who />
       </main>

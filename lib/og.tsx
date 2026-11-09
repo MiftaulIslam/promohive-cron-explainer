@@ -20,7 +20,7 @@ export function ogImage({ kicker, title, text }: { kicker: string; title: string
           <path d={HEX} fill="none" stroke={C.line} strokeWidth="0.5" />
         </svg>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <svg width="54" height="54" viewBox="0 0 32 32"><path d={HEX} fill={C.honey} stroke={C.ink} strokeWidth="2.2" strokeLinejoin="round" /><path d={tool.glyph} transform="translate(7 7) scale(.75)" fill="none" stroke="#141311" strokeWidth="2.4" strokeLinecap="square" /></svg>
+          <svg width="54" height="54" viewBox="0 0 256 256"><rect width="256" height="256" rx="64" fill={C.honey} /><g transform="translate(40 40) scale(.6875)"><path d={tool.logo.soft} fill="#141311" opacity=".3" /><path d={tool.logo.solid} fill="#141311" /></g></svg>
           <span style={{ fontFamily: 'Bricolage', fontSize: 40, letterSpacing: -1.6 }}>{company.name}</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 22, maxWidth: 920 }}>
