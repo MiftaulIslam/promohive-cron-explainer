@@ -30,16 +30,35 @@ img, svg { display: block; max-width: 100%; }
 /* Skips rendering work for sections that are off screen. Below-the-fold sections only, never the hero. */
 .below { content-visibility: auto; contain-intrinsic-block-size: auto 900px; }
 
-/* Header */
-.ph-bar { position: relative; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; }
-.ph-brand { display: inline-flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -.03em; text-decoration: none; white-space: nowrap; }
-.ph-brand svg { width: 30px; height: 30px; flex: none; }
-.ph-nav { display: flex; align-items: center; gap: 20px; font-size: 15px; font-weight: 500; }
-.ph-nav a { text-decoration: none; }
-.ph-nav a:not(.ph-btn):hover { text-decoration: underline; text-underline-offset: 4px; }
+/* Header: the main site's floating bar. It keeps one dark surface so it reads over every tool's own colors. */
+.ph-bar { position: relative; z-index: 100; min-height: 84px; }
+.ph-pill { --focus: var(--honey); position: fixed; top: 12px; left: 50%; z-index: 100; translate: -50% 0; display: flex; align-items: center; gap: 16px; width: min(100% - 2 * var(--gutter), var(--wrap)); min-height: 60px; padding: 8px 8px 8px 20px; border: 1px solid #3d3932; border-radius: 999px; background: var(--night-2); color: var(--on-night); box-shadow: 0 18px 50px -24px rgb(0 0 0 / .8), 0 2px 6px rgb(0 0 0 / .3); }
+.ph-brand { display: inline-flex; align-items: center; flex: none; min-height: 44px; }
+.ph-brand img { width: auto; height: 30px; }
+.ph-tool { display: inline-flex; align-items: center; gap: 8px; flex: none; padding-left: 16px; border-left: 1px solid #3d3932; font-size: 14px; font-weight: 600; white-space: nowrap; }
+.ph-tool__name { display: none; }
+.ph-mark { display: grid; place-items: center; width: 28px; height: 28px; flex: none; border-radius: 8px; background: var(--honey); color: var(--ink); }
+.ph-mark svg { width: 20px; height: 20px; }
+.ph-links { display: none; position: absolute; left: 50%; translate: -50% 0; gap: 4px; }
+.ph-links a { padding: 10px 16px; border-radius: 999px; font-size: 15px; font-weight: 500; color: var(--on-night-2); text-decoration: none; transition: background .16s, color .16s; }
+.ph-links a:hover { background: var(--night-3); color: var(--on-night); }
+.ph-links a[aria-current] { background: color-mix(in srgb, var(--honey) 18%, var(--night-2)); color: var(--on-night); }
+.ph-cta { display: none; align-items: center; gap: 8px; flex: none; margin-left: auto; min-height: 44px; padding: 4px 4px 4px 20px; border-radius: 999px; background: var(--on-night); color: var(--ink); font-size: 15px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background .16s; }
+.ph-cta:hover { background: var(--honey); }
+.ph-cta i { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgb(20 19 17 / .12); }
+.ph-cta svg { width: 16px; height: 16px; }
+.ph-menu { position: relative; flex: none; margin-left: auto; }
+.ph-menu summary { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; list-style: none; cursor: pointer; }
+.ph-menu summary::-webkit-details-marker { display: none; }
+.ph-menu summary svg { width: 20px; height: 20px; }
+.ph-menu nav { position: absolute; right: 0; top: calc(100% + 12px); display: grid; min-width: 208px; padding: 8px; border: 1px solid #3d3932; border-radius: 16px; background: var(--night-2); box-shadow: 0 18px 50px -24px rgb(0 0 0 / .8); }
+.ph-menu nav a { padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 500; text-decoration: none; }
+.ph-menu nav a:hover { background: var(--night-3); }
+@media (width >= 640px) { .ph-cta { display: inline-flex; } .ph-menu { margin-left: 0; } }
+@media (width >= 1000px) { .ph-links { display: flex; } .ph-menu { display: none; } }
+@media (width >= 1360px) { .ph-tool__name { display: inline; } }
 .ph-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px; border: 1px solid currentColor; border-radius: 10px; background: transparent; font-weight: 600; text-decoration: none; cursor: pointer; transition: background-color .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease), transform .12s var(--ease); }
 .ph-btn:active { transform: scale(.98); }
-@media (width < 560px) { .ph-nav .ph-hide-s { display: none; } .ph-brand { font-size: 18px; } }
 
 /* Footer: the four other tools, then the company */
 .ph-foot { background: var(--night); color: var(--on-night); padding-block: 64px 32px; --focus: var(--honey); }
@@ -67,3 +86,16 @@ img, svg { display: block; max-width: 100%; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
 }
+
+/* Photography: full-bleed strips and sections set on a photo. The photo eases to rest as it scrolls past, on the compositor. */
+.ph-strip { position: relative; height: clamp(240px, 36vw, 540px); overflow: hidden; background: var(--night); }
+.ph-bg { object-fit: cover; }
+.has-photo.has-photo { position: relative; isolation: isolate; overflow: hidden; background: var(--night); color: var(--on-night); --focus: var(--honey); }
+.has-photo > .ph-bg { z-index: -2; }
+.has-photo::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, rgb(15 14 12 / .92), rgb(15 14 12 / .78) 55%, rgb(15 14 12 / .55)); }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .ph-strip .ph-bg, .has-photo > .ph-bg { animation: ph-drift linear both; animation-timeline: view(); }
+  }
+}
+@keyframes ph-drift { from { transform: scale(1.12); } to { transform: scale(1); } }

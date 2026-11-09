@@ -1,17 +1,39 @@
+import Image from 'next/image';
+import logo from '@/assets/promohive-logo.svg';
 import { company, links, otherTools, siteUrl } from '@/lib/site';
 import { tool } from '@/lib/tool';
 
+const NAV = [
+  { label: 'Tools', href: links.tools, current: true },
+  { label: 'Services', href: links.services },
+  { label: 'Work', href: links.work },
+  { label: 'Labs', href: links.labs },
+  { label: 'Team', href: links.team },
+];
+
+function ToolMark() {
+  return (
+    <span className="ph-mark">
+      <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d={tool.logo.soft} opacity=".3" /><path d={tool.logo.solid} /></svg>
+    </span>
+  );
+}
+
+/** The main site's floating bar, on one dark surface so it reads over every tool's own colors. */
 export function ToolBar({ className = 'wrap ph-bar' }: { className?: string }) {
+  const items = NAV.map((n) => <a key={n.label} href={n.href} aria-current={n.current ? 'true' : undefined}>{n.label}</a>);
   return (
     <header className={className}>
-      <a className="ph-brand" href={links.home} aria-label={`${company.name} home`}>
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8.6 3h14.8l7.4 13-7.4 13H8.6L1.2 16z" fill="#f2a516" stroke="currentColor" strokeWidth="2.2" strokeLinejoin="round" /><path d={tool.glyph} transform="translate(7 7) scale(.75)" fill="none" stroke="#141311" strokeWidth="2.4" strokeLinecap="square" /></svg>
-        {company.name}
-      </a>
-      <nav className="ph-nav" aria-label="Main">
-        <a className="ph-hide-s" href={links.tools}>All tools</a>
-        <a className="ph-btn" href={links.start}>Start a brief</a>
-      </nav>
+      <div className="ph-pill">
+        <a className="ph-brand" href={links.home} aria-label={`${company.name} home`}><Image src={logo} alt="" loading="eager" /></a>
+        <span className="ph-tool"><ToolMark /><span className="ph-tool__name">{tool.name}</span></span>
+        <nav className="ph-links" aria-label="Main">{items}</nav>
+        <a className="ph-cta" href={links.start}>Start a brief<i aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="square"><path d="M4 12h15M13 6l6 6-6 6" /></svg></i></a>
+        <details className="ph-menu">
+          <summary aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="square" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h11" /></svg></summary>
+          <nav aria-label="Mobile">{items}<a href={links.start}>Start a brief</a></nav>
+        </details>
+      </div>
     </header>
   );
 }

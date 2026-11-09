@@ -1,3 +1,12 @@
+import Image from 'next/image';
+import clockwork from '@/assets/photos/clockwork.jpg';
+import stationclock from '@/assets/photos/stationclock.jpg';
+import nightclock from '@/assets/photos/nightclock.jpg';
+
+export function Clockwork() {
+  return <figure className="ph-strip" aria-hidden="true"><Image className="ph-bg" src={clockwork} alt="" fill sizes="100vw" placeholder="blur" /></figure>;
+}
+
 function Dial({ time, handTurn, place }: { time: string; handTurn: number; place: string }) {
   return (
     <figure className="dial">
@@ -39,6 +48,7 @@ export function Reference() {
   return (
     <section className="ref wrap below" aria-labelledby="ref-h">
       <h2 id="ref-h" data-in="">What the fields accept</h2>
+      <figure className="ref__photo" data-in="" aria-hidden="true"><Image className="ph-bg" src={stationclock} alt="" fill sizes="380px" placeholder="blur" /></figure>
 
       <div className="ref__sheet" data-in="" style={{ '--i': 1 }}>
         <table>
@@ -69,7 +79,8 @@ export function Reference() {
 
 export function Who() {
   return (
-    <section className="who below" aria-labelledby="who-h">
+    <section className="who below has-photo" aria-labelledby="who-h">
+      <Image className="ph-bg" src={nightclock} alt="" fill sizes="100vw" placeholder="blur" />
       <div className="wrap who__in">
         <h2 id="who-h" data-in="">Who it is for</h2>
         <div className="who__a" data-in="" style={{ '--i': 1 }}>

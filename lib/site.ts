@@ -7,7 +7,7 @@ export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:300
 export const indexable = process.env.NEXT_PUBLIC_INDEXABLE === 'true';
 
 export const company = { name: 'PromoHive Venture', url: 'https://promohive.org', email: 'hello@promohive.org' };
-export const links = { home: company.url, tools: `${company.url}/tools`, start: `${company.url}/start` };
+export const links = { home: company.url, tools: `${company.url}/tools`, start: `${company.url}/start`, services: `${company.url}/services`, work: `${company.url}/work`, labs: `${company.url}/labs`, team: `${company.url}/team` };
 
 const allTools = [
   { slug: 'uptime-calculator', name: 'Uptime Budget Calculator', category: 'Engineering', host: 'uptime' },
