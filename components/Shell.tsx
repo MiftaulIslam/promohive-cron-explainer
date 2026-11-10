@@ -45,7 +45,7 @@ export function ToolFoot({ className = 'ph-foot' }: { className?: string }) {
         <div className="ph-foot__top">
           <div>
             <h2>A free tool from a team that builds software</h2>
-            <p>{company.name} designs, builds and runs software for companies in Bangladesh and abroad, and publishes the tools it works with.</p>
+            <p><a href={links.home}>{company.name}</a> designs, builds and runs software for companies in Bangladesh and abroad, and publishes the tools it works with. See its <a href={links.services}>software and marketing services</a> or the <a href={links.tools}>full list of free tools</a>.</p>
             <a className="ph-btn" href={links.start}>Start a brief</a>
           </div>
           <ul className="ph-foot__tools">
@@ -55,7 +55,7 @@ export function ToolFoot({ className = 'ph-foot' }: { className?: string }) {
           </ul>
         </div>
         <div className="ph-foot__base">
-          <span>© 2026 {company.name}. Dhaka, Bangladesh</span>
+          <span>© 2026 <a href={links.home}>{company.name}</a>. Dhaka, Bangladesh</span>
           <span>Runs in your browser. Nothing you enter is sent anywhere.</span>
         </div>
       </div>
@@ -63,19 +63,46 @@ export function ToolFoot({ className = 'ph-foot' }: { className?: string }) {
   );
 }
 
-/** Structured data for the page. `<` is escaped so content can never close the script tag. */
-export function ToolJsonLd() {
+export interface Faq { q: string; a: string }
+
+/**
+ * Structured data for the page, as one graph: the company, this site, the page, the tool, its breadcrumb and the FAQ
+ * the page shows. `<` is escaped so content can never close the script tag.
+ */
+export function ToolJsonLd({ faq }: { faq: readonly Faq[] }) {
+  const url = siteUrl;
+  const image = `${siteUrl}/opengraph-image`;
+  const org = { '@id': company.id };
   const data = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: tool.name,
-    description: tool.summary,
-    url: siteUrl,
-    applicationCategory: ({ Marketing: 'BusinessApplication', Design: 'DesignApplication', Engineering: 'DeveloperApplication' })[tool.category],
-    operatingSystem: 'Any (runs in a web browser)',
-    isAccessibleForFree: true,
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-    publisher: { '@type': 'Organization', name: company.name, url: company.url, email: company.email },
+    '@graph': [
+      { '@type': 'Organization', '@id': company.id, name: company.name, url: company.url, email: company.email },
+      { '@type': 'WebSite', '@id': `${url}/#website`, url, name: tool.name, inLanguage: 'en', publisher: org },
+      {
+        '@type': 'WebPage', '@id': `${url}/#webpage`, url, name: tool.title, description: tool.description, inLanguage: 'en',
+        isPartOf: { '@id': `${url}/#website` }, mainEntity: { '@id': `${url}/#app` }, breadcrumb: { '@id': `${url}/#breadcrumb` },
+        primaryImageOfPage: { '@type': 'ImageObject', url: image, width: 1200, height: 630 }, dateModified: tool.updated, publisher: org,
+      },
+      {
+        '@type': 'WebApplication', '@id': `${url}/#app`, name: tool.name, url, description: tool.summary, image,
+        applicationCategory: ({ Marketing: 'BusinessApplication', Design: 'DesignApplication', Engineering: 'DeveloperApplication' })[tool.category],
+        operatingSystem: 'Any', browserRequirements: 'Requires JavaScript and a current web browser',
+        isAccessibleForFree: true, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        featureList: tool.featureList, inLanguage: 'en', dateModified: tool.updated, publisher: org, provider: org,
+      },
+      {
+        '@type': 'BreadcrumbList', '@id': `${url}/#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'PromoHive', item: company.url },
+          { '@type': 'ListItem', position: 2, name: 'Tools', item: links.tools },
+          { '@type': 'ListItem', position: 3, name: tool.name, item: url },
+        ],
+      },
+      {
+        '@type': 'FAQPage', '@id': `${url}/#faq`, url, isPartOf: { '@id': `${url}/#webpage` },
+        mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      },
+    ],
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />;
 }

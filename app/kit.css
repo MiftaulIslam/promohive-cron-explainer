@@ -72,7 +72,32 @@ img, svg { display: block; max-width: 100%; }
 .ph-foot__tools a:hover { color: var(--honey); }
 .ph-foot__tools span { font: 400 15px/1.4 var(--body); letter-spacing: 0; color: var(--on-night-3); align-self: center; white-space: nowrap; }
 .ph-foot__base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 48px; color: var(--on-night-3); font-size: 15px; }
+.ph-foot p a, .ph-foot__base a { text-underline-offset: 3px; transition: color .18s var(--ease); }
+.ph-foot p a:hover, .ph-foot__base a:hover { color: var(--honey); }
 @media (width < 800px) { .ph-foot__top { grid-template-columns: minmax(0, 1fr); } }
+
+/* The guide: how to use the tool, the questions people ask, and the work behind it. Plain reading copy on paper, the same on every tool page. */
+.ph-guide { --rule: color-mix(in srgb, var(--ink) 16%, transparent); background: var(--paper); color: var(--ink); --focus: var(--ink); padding-block: 112px; border-top: 1px solid var(--rule); }
+.ph-guide__grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 64px; align-items: start; }
+.ph-guide h2 { font-size: clamp(36px, 4.2vw, 60px); }
+.ph-guide h3 { font-size: clamp(20px, 1.7vw, 24px); line-height: 1.2; letter-spacing: -.02em; }
+.ph-guide p { color: var(--ink-2); max-width: 66ch; }
+.ph-guide a { color: var(--ink); font-weight: 600; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color .18s var(--ease); }
+.ph-guide a:hover { color: var(--ember-text); }
+.ph-guide code { font-family: var(--mono); font-size: .92em; }
+.ph-steps { counter-reset: step; margin-top: 32px; }
+.ph-steps li { counter-increment: step; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: baseline; padding-block: 16px; border-top: 1px solid var(--rule); }
+.ph-steps li:last-child { border-bottom: 1px solid var(--rule); }
+.ph-steps li::before { content: counter(step); font: 750 26px/1 var(--display); letter-spacing: -.02em; color: var(--honey-text); }
+.ph-faq { margin-top: 32px; }
+.ph-faq > div { padding-block: 24px; border-top: 1px solid var(--rule); }
+.ph-faq > div:last-child { border-bottom: 1px solid var(--rule); }
+.ph-faq p { margin-top: 8px; }
+.ph-guide__more { grid-column: 1 / -1; font-size: 18px; }
+@media (width < 900px) {
+  .ph-guide { padding-block: 72px; }
+  .ph-guide__grid { grid-template-columns: minmax(0, 1fr); gap: 56px; }
+}
 
 /* One entrance per section, driven by the scroll position itself, so it costs no JavaScript. Browsers without
    scroll-driven animation simply show the content. Never put data-in on anything in the first screen. */
