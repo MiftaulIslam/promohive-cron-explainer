@@ -6,7 +6,9 @@ code { font-family: var(--mono); }
 /* ---------- The stand: line, column heads, reading, board */
 .stand { padding-block: 4px 56px; }
 
-.line__top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 32px; min-height: 44px; }
+.stand__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 24px; margin-bottom: 12px; }
+.stand__intro { max-width: 92ch; color: var(--ink-2); font-size: 15px; line-height: 1.4; }
+.line__top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 32px; min-height: 44px; }
 .line__name { font: 700 18px/1.2 var(--display); letter-spacing: -.02em; white-space: nowrap; }
 .line__label { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
 .line__label label { font-weight: 700; font-size: 15px; white-space: nowrap; }
@@ -53,7 +55,7 @@ code { font-family: var(--mono); }
 .routes { grid-column: 1; grid-row: 2; align-self: end; }
 .depart { grid-column: 2; grid-row: 1 / span 2; }
 
-.read__say { font-size: 60px; line-height: 1.02; min-height: 184px; text-wrap: pretty; }
+.read__say { font-family: var(--display); font-weight: 750; letter-spacing: -.03em; font-size: 60px; line-height: 1.02; min-height: 184px; text-wrap: pretty; }
 .read__say[data-len="m"] { font-size: 56px; line-height: 1.04; }
 .read__say[data-len="l"] { font-size: 42px; line-height: 1.08; }
 .read__say[data-len="xl"] { font-size: 32px; line-height: 1.12; }
@@ -180,8 +182,7 @@ code { font-family: var(--mono); }
 
 @media (width < 1200px) {
   .line { --fs-max: 132px; --line-h: 140px; }
-  .line__top { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
-  .line__name { grid-column: 1 / -1; }
+  .line__top { row-gap: 4px; }
   .stage { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
   .read, .routes, .depart { grid-column: 1; grid-row: auto; }
   .read { order: 1; }
@@ -195,9 +196,9 @@ code { font-family: var(--mono); }
   .stand { padding-bottom: 40px; }
   .line { --fs-max: 58px; --fs-min: 22px; --line-h: 66px; }
   .line__top { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
-  .line__name { grid-column: 1; min-width: 0; white-space: normal; }
+  .line__name { white-space: normal; }
   .copy { grid-column: 2; grid-row: 1; min-height: 44px; max-width: 168px; padding: 4px 12px; font-size: 15px; line-height: 20px; white-space: normal; text-align: center; }
-  .line__label { grid-column: 1 / -1; }
+  .line__label { grid-column: 1; }
   .line__label { display: block; }
   .line__label label { display: block; font-size: 16px; }
   .line__label p { margin-top: 2px; }

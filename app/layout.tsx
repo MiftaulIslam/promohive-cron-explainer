@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
-import { ToolJsonLd } from '@/components/Shell';
 import { SmoothScroll } from '@/components/SmoothScroll';
 import { company, indexable, siteUrl } from '@/lib/site';
 import { tool } from '@/lib/tool';
@@ -15,21 +14,23 @@ export const ensureStatic = 'navigation';
 const display = localFont({ src: './fonts/bricolage-normal-latin.woff2', weight: '500 800', adjustFontFallback: false, variable: '--font-display', fallback: ['PH Display Fallback', 'Arial Narrow', 'system-ui', 'sans-serif'] });
 const body = localFont({ src: './fonts/schibsted-normal-latin.woff2', weight: '400 700', variable: '--font-body', fallback: ['system-ui', '-apple-system', 'Segoe UI', 'sans-serif'] });
 
-const title = `${tool.name}: Free Online Tool | ${company.name}`;
-
+// The share image comes from opengraph-image.tsx and twitter-image.tsx, the icons from icon.svg and apple-icon.tsx.
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title,
-  description: tool.summary,
+  title: tool.title,
+  description: tool.description,
   applicationName: tool.name,
+  category: tool.category,
   authors: [{ name: company.name, url: company.url }],
   creator: company.name,
   publisher: company.name,
-  alternates: { canonical: '/' },
+  alternates: { canonical: '/', types: { 'text/plain': '/llms.txt' } },
   formatDetection: { telephone: false, email: false, address: false },
-  robots: indexable ? { index: true, follow: true } : { index: false, follow: false },
-  openGraph: { type: 'website', url: '/', title, description: tool.summary, siteName: company.name, locale: 'en_US' },
-  twitter: { card: 'summary_large_image', title, description: tool.summary },
+  robots: indexable
+    ? { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 } }
+    : { index: false, follow: false },
+  openGraph: { type: 'website', url: '/', title: tool.title, description: tool.description, siteName: company.name, locale: 'en_US' },
+  twitter: { card: 'summary_large_image', title: tool.title, description: tool.description },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -37,7 +38,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body id="top">
         {children}
-        <ToolJsonLd />
         <SmoothScroll />
       </body>
     </html>

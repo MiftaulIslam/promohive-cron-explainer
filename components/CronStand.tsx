@@ -31,9 +31,13 @@ export function CronStand() {
   return (
     // method="dialog" makes Enter in the field a no-op even before the page's JavaScript has loaded.
     <form className="wrap stand" id="c-form" method="dialog" noValidate autoComplete="off">
+      <div className="stand__head">
+        <h1 className="line__name">Cron Schedule Explainer</h1>
+        <p className="stand__intro">A free cron expression explainer for developers and anyone scheduling jobs or backups. It reads a cron line back in plain English and lists the next runs in UTC and Dhaka time. No sign-up, and it runs in your browser.</p>
+      </div>
+
       <div className="line">
         <div className="line__top">
-          <p className="line__name">Cron Schedule Explainer</p>
           <div className="line__label">
             <label htmlFor="c-expr">Cron line</label>
             <p id="c-expr-hint">Five fields: minute, hour, day of month, month, day of week. Shortcuts such as @daily work too.</p>
@@ -57,7 +61,7 @@ export function CronStand() {
 
       <div className="stage">
         <div className="read">
-          <h1 className="read__say" id="c-say" data-len={lenBucket(`${summary}, ${zone}`.length)} aria-live="polite" aria-atomic="true">{summary}, <span className="read__zone">{zone}</span></h1>
+          <p className="read__say" id="c-say" data-len={lenBucket(`${summary}, ${zone}`.length)} aria-live="polite" aria-atomic="true">{summary}, <span className="read__zone">{zone}</span></p>
         </div>
 
         <fieldset className="routes">
